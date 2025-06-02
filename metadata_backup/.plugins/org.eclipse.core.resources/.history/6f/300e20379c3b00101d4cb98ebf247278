@@ -1,0 +1,48 @@
+
+@font-face {
+    src: url("tipografia/CutePixel.ttf");
+}
+
+.text {
+	-fx-font-family: "CutePixel";
+    -fx-font-size: 32.0px;
+}
+
+#botoIniciar {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-background-radius: 3.0;
+    -fx-font-family: "CutePixel";
+    -fx-font-size: 16.0px; 
+}
+
+#botoIniciar:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+#comboNivel{
+	-fx-font-family: "CutePixel";
+	-fx-border-width:1.0px;
+	-fx-border-color: #4994ec;
+	-fx-color:daf6ff;
+}
+
+#comboNivel .list-cell:hover {
+    -fx-background-color:#4994ec;
+}
+
+#comboNivel .list-cell:selected,
+#comboNivel .list-cell:focused {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-font-family: "CutePixel";
+
+}
+
+#comboNivel .list-cell:selected:hover,
+#comboNivel .list-cell:focused:hover {
+      -fx-background-color:#4994ec;
+      -fx-text-fill: white;
+
+}

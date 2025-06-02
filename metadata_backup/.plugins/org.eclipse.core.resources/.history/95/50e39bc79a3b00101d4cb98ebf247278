@@ -1,0 +1,29 @@
+
+@font-face {
+    src: url("tipografia/CutePixel.ttf");
+}
+
+.text {
+	-fx-font-family: "CutePixel";
+    -fx-font-size: 36.0px;
+}
+
+.clar {
+    -fx-background-color:#e9faff;
+}
+
+.oscur {
+    -fx-background-color:#adc2ff;
+}
+
+.buida{
+	-fx-text-fill: #0041ff;
+	-fx-font-weight: bold;
+	-fx-background-color:white;
+	-fx-font-size: 16.0px;
+	
+}
+
+.mina{
+	-fx-background-color:red;
+}

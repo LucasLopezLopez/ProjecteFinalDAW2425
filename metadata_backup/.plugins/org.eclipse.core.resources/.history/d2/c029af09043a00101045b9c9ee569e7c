@@ -1,0 +1,308 @@
+package application;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+public class MenuController implements Initializable {
+	// Objecte a compartir amb l'altra escena
+	private Usuaris usuariActual;
+
+	public void setUsuari(Usuaris usuariActual) {
+		this.usuariActual = usuariActual;
+	}
+
+	public Usuaris getUsuari() {
+		return this.usuariActual;
+	}
+
+	// Atributos Usuaris
+	private String emailUsuari;
+
+	// variables
+	@FXML
+	private VBox root;
+	@FXML
+	private ImageView avatarImg;
+	@FXML
+	private Label textoBienvenido;
+	@FXML
+	private ImageView imgBuscaMines;
+	@FXML
+	private ImageView imgPixelArt;
+	@FXML
+	private ImageView imgJocVida;
+	@FXML
+	private ImageView imgWordles;
+	@FXML
+	private Button botoBuscaMines;
+	@FXML
+	private Button botoPixelArt;
+	@FXML
+	private Button botoJocVida;
+	@FXML
+	private Button botoWordles;
+	@FXML
+	private Button botoVolver;
+	@FXML
+	private Button botoBorrarUsuari;
+
+	private ContextMenu menuFoto;
+	private MenuItem itemCambiarFoto;
+	private MenuItem itemBorrarUsuari;
+	private MenuItem itemTanca;
+	private SeparatorMenuItem separador;
+
+	@FXML
+	public void menuDesplegable(MouseEvent event) {
+		Platform.runLater(() -> {
+
+			try {
+
+				// menú fitxer i ítems
+				menuFoto = new ContextMenu();
+				itemCambiarFoto = new MenuItem("Cambiar foto de perfil");
+				itemBorrarUsuari = new MenuItem("Eliminar cuenta");
+				itemTanca = new MenuItem("Cerrar sesión");
+				separador = new SeparatorMenuItem();
+
+				menuFoto.getItems().addAll(itemCambiarFoto, separador, itemBorrarUsuari, itemTanca);
+
+				itemCambiarFoto.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						System.out.println("Cambiar foto de perfil. ");
+						try {
+							cambiarAvatar(event);
+						} catch (ClassNotFoundException | IOException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+
+				itemTanca.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						logout(event);
+					}
+				});
+
+				itemBorrarUsuari.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						System.out.println("Borrar usuari. ");
+						try {
+							borrarUsuari(event);
+						} catch (ClassNotFoundException | IOException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+
+				Node source = (Node) event.getSource();
+				menuFoto.show(source, event.getScreenX(), event.getScreenY());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+
+	}
+
+	// Boto per a entrar als jocs
+	@FXML
+	public void obrirBuscaMines(MouseEvent event) {
+		try {
+			VBox rootBuscaMines = (VBox) FXMLLoader.load(getClass().getResource("TamanyBuscamines.fxml"));
+			Scene pantallaBuscaMines = new Scene(rootBuscaMines);
+			Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			pantallaBuscaMines.getStylesheets().add(getClass().getResource("tamanyBuscamines.css").toExternalForm());
+			window.setScene(pantallaBuscaMines);
+			window.setTitle("Busca Mines");
+			window.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	public void obrirPixelArt(MouseEvent event) {
+		try {
+			VBox rootPixelArt = (VBox) FXMLLoader.load(getClass().getResource("PixelArt.fxml"));
+			Scene pantallaPixelArt = new Scene(rootPixelArt);
+			Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			pantallaPixelArt.getStylesheets().add(getClass().getResource("pixelArt.css").toExternalForm());
+			window.setScene(pantallaPixelArt);
+			window.setTitle("Pixel Art");
+			window.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	public void obrirJocVida(MouseEvent event) {
+		try {
+			VBox rootJocVida = (VBox) FXMLLoader.load(getClass().getResource("JocVida.fxml"));
+			Scene pantallaJocVida = new Scene(rootJocVida);
+			Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			pantallaJocVida.getStylesheets().add(getClass().getResource("jocVida.css").toExternalForm());
+			window.setScene(pantallaJocVida);
+			window.setTitle("Joc de la vida");
+			window.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	public void obrirWordles(MouseEvent event) {
+		try {
+			VBox rootWordles = (VBox) FXMLLoader.load(getClass().getResource("Wordle.fxml"));
+			Scene pantallaWordles = new Scene(rootWordles);
+			Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			pantallaWordles.getStylesheets().add(getClass().getResource("wordle.css").toExternalForm());
+			window.setScene(pantallaWordles);
+			window.setTitle("Wordle");
+			window.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Boton cerrar sesion
+	public void logout(ActionEvent event) {
+		try {
+			VBox rootLogout = (VBox) FXMLLoader.load(getClass().getResource("Login.fxml"));
+			Scene pantallaIrLogin = new Scene(rootLogout);
+			Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			window.setScene(pantallaIrLogin);
+			window.setTitle("Login");
+			window.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Boton borrar usuairo
+	@FXML
+	public void borrarUsuari(ActionEvent event) throws ClassNotFoundException, IOException {
+		try {
+			// Carregar el controlador per a la BD
+			Class.forName("com.mysql.cj.jdbc.Driver");
+
+			// Establir la connexió
+			String urlBaseDades = "jdbc:mysql://localhost:3306/cal";
+			String usuari = "root";
+			String contrasenya = "";
+
+			Connection c = DriverManager.getConnection(urlBaseDades, usuari, contrasenya);
+			String sentencia = "DELETE FROM usuarios where email = ?";
+			PreparedStatement s = c.prepareStatement(sentencia);
+			s.setString(1, emailUsuari);
+
+			int resultat = s.executeUpdate();
+
+			if (resultat > 0) {
+				System.out.println("Usuari eliminat. ");
+				logout(event);
+			} else {
+				System.out.println("No existeix ningun email .");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	// Cambiar img del avatar
+	// Pasar la img a fichero bite i el fichero guardarlo en la base de datos
+	@FXML
+	public void cambiarAvatar(ActionEvent event) throws ClassNotFoundException, IOException {
+		try {
+			try {
+				// Carregar el controlador per a la BD
+				Class.forName("com.mysql.cj.jdbc.Driver");
+
+				// Establir la connexió
+				String urlBaseDades = "jdbc:mysql://localhost:3306/cal";
+				String usuari = "root";
+				String contrasenya = "";
+				Connection c = DriverManager.getConnection(urlBaseDades, usuari, contrasenya);
+
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("Selecciona una imagen");
+
+				File file = fileChooser.showOpenDialog(null);
+
+				if (file != null) {
+					FileInputStream inputStream = new FileInputStream(file);
+					String sentencia = "UPDATE usuarios SET img = ? WHERE email = ?";
+					PreparedStatement s = c.prepareStatement(sentencia);
+					s.setBinaryStream(1, inputStream, (int) file.length());
+					s.setString(2, emailUsuari);
+					int filas = s.executeUpdate();
+
+					if (filas > 0) {
+						System.out.println("Avatar actualizat");
+	                    Image imgAvatar = new Image(file.toURI().toString());
+	                    avatarImg.setImage(imgAvatar)
+					} else {
+						System.out.println("No se pudo actualizar la imagen");
+					}
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+
+		}
+	}
+
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		Platform.runLater(() -> {
+			Stage window = (Stage) root.getScene().getWindow();
+			if (window != null) {
+				this.usuariActual = (Usuaris) window.getUserData();
+				if (usuariActual != null) {
+					this.emailUsuari = usuariActual.getEmail();
+					textoBienvenido.setText("Bienvenido " + usuariActual.getNom());
+				} else {
+
+				}
+			} else {
+
+			}
+
+		});
+	}
+
+}

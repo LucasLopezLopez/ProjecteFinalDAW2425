@@ -13,61 +13,65 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PixelartController">
    <children>
-      <HBox>
+      <HBox alignment="CENTER">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="PIXELART" textAlignment="CENTER" wrappingWidth="158.34375">
+            <Text fx:id="textBenvingut" strokeType="OUTSIDE" strokeWidth="0.0" text="PIXELART" textAlignment="CENTER" wrappingWidth="200.34375">
                <font>
                   <Font name="Consolas" size="36.0" />
                </font>
                <HBox.margin>
-                  <Insets left="310.0" right="20.0" top="30.0" />
+                  <Insets top="20.0" />
                </HBox.margin>
             </Text>
-            <ImageView fitHeight="103.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                   <Image url="@img/pincel.png" />
-               </image>
-               <HBox.margin>
-                  <Insets top="7.0" />
-               </HBox.margin>
-            </ImageView>
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="69.0" prefWidth="800.0">
          <children>
-            <ColorPicker fx:id="colorPicker">
+            <ColorPicker fx:id="colorPicker" prefHeight="34.0" prefWidth="138.0">
                <HBox.margin>
-                  <Insets left="330.0" top="10.0" />
+                  <Insets />
                </HBox.margin>
             </ColorPicker>
          </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
       </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="302.0" prefWidth="800.0">
          <children>
             <GridPane fx:id="tauler">
             </GridPane>
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
          <children>
-           <Button  onMouseClicked="#nouTauler" maxHeight="50.0" maxWidth="50.0" minHeight="50.0" minWidth="50.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" styleClass="boto">
+           <Button maxHeight="50.0" maxWidth="50.0" minHeight="39.0" minWidth="50.0" mnemonicParsing="false" onMouseClicked="#nouTauler" prefHeight="39.0" prefWidth="37.0" styleClass="boto">
 			   <HBox.margin>
-			      <Insets left="320.0" right="70.0" />
+			      <Insets />
 			   </HBox.margin>
                <graphic>
-                  <ImageView id="botoNouTauler" fitHeight="50.0" fitWidth="40.0"  pickOnBounds="true" preserveRatio="true">
+                  <ImageView id="botoNouTauler" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@img/tirarArrere.png" />
+                        <Image url="@img/boto_flecha_volver.png" />
                      </image>
                   </ImageView>
                </graphic>
 			</Button>
+            <Button fx:id="volverMenu" maxHeight="50.0" maxWidth="50.0" minHeight="39.0" minWidth="50.0" mnemonicParsing="false" onAction="#obrirMenu" onMouseClicked="#nouTauler" prefHeight="39.0" prefWidth="37.0" styleClass="boto">
+               <graphic>
+                  <ImageView id="botoNouTauler" fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/boton_casa_menu.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
 			
 			<Button maxHeight="50.0" maxWidth="50.0" minHeight="50.0" minWidth="50.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" styleClass="boto">
                <graphic>
                   <ImageView fitHeight="50.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@img/Guardar.png" />
+                        <Image url="@img/boto_guardar.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
@@ -78,9 +82,6 @@
          <VBox.margin>
             <Insets />
          </VBox.margin>
-         <padding>
-            <Insets top="20.0" />
-         </padding>
       </HBox>
    </children>
 </VBox>

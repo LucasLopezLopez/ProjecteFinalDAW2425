@@ -1,0 +1,419 @@
+package application;
+
+import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
+import javafx.util.Duration;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+public class TaulerBuscaminesController {
+
+   
+	   @FXML
+	    private GridPane tauler;
+	    private String nivell;
+	    private int segonsDuracio = 0;
+	    private int numBanderes;
+	    @FXML
+	    private Text timer;
+	    @FXML
+	    private Text banderes;
+	    private Timeline timeline;
+	    private boolean jocAcabat=false;
+	    private int casellesBuides;
+	    private boolean matriuTauler [][];
+	    ThreadLocalRandom rnd = ThreadLocalRandom.current();
+	    
+	    public void setNivell(String nivell) {
+	     System.out.println("Nivell de dificultat:"+nivell);
+	        this.nivell = nivell;
+	        construirTablero();
+	      
+	    }
+	    
+	    private void construirTablero() {
+	        int files = 0;
+	        int columnes = 0;
+	        int numMines=0;
+
+	        //Inicialitzar tauler
+	        switch (nivell) {
+	            case "Fàcil":
+	                files = columnes = 6;
+	              matriuTauler = new boolean [6][6];
+	              numMines=6;
+	              casellesBuides=30;
+	                break;
+	            case "Mitjà":
+	                files = columnes = 9;
+	                matriuTauler = new boolean [9][9];
+	                numMines=15;
+	                casellesBuides=66;
+	                break;
+	            case "Difícil":
+	                files = columnes = 12;
+	                 matriuTauler = new boolean [12][12];
+	                 numMines=25;
+	                 casellesBuides=119;
+	                break;
+	        }
+	        numBanderes=numMines;
+	        banderes.setText(numBanderes+"");
+	        tauler.getChildren().clear();
+	        //Colocar les mines
+	        colocarMines(numMines, matriuTauler);
+	        //Crear Tauler
+	        crearTauler(files, columnes);
+	       
+	        
+	        
+	      }
+
+	    private void iniciarTemporizador() {
+	        timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+	        	segonsDuracio++;
+	            timer.setText(String.format("%03d", segonsDuracio));
+	        }));
+	        timeline.setCycleCount(Timeline.INDEFINITE);
+	        timeline.play();
+	    }
+	    
+    @FXML
+        public void initialize() {
+      
+    	  iniciarTemporizador();
+   
+        }
+    
+    	public void colocarMines(int numMines, boolean [][] matriuTauler) {
+    	int minesColocades=0;
+    	
+    	while(minesColocades<numMines) {
+    		 int numFila    = rnd.nextInt(matriuTauler.length);
+    	     int numColumna = rnd.nextInt(matriuTauler.length);
+    		
+    		if(!matriuTauler[numFila][numColumna]) {
+    			matriuTauler[numFila][numColumna]=true;
+    			minesColocades++;
+    		}
+    	}
+    	
+    	for (int i = 0; i < matriuTauler.length; i++) {
+			for (int j = 0; j < matriuTauler.length; j++) {
+				System.out.print(matriuTauler[i][j]+" ");
+			}
+			System.out.println();
+		}
+    }
+
+    	public void crearTauler(int files, int columnes) {
+	   //Crear el tauler
+            Image bandera = new Image(getClass().getResourceAsStream("/application/img/bandera.png"));
+            Image mina = new Image(getClass().getResourceAsStream("/application/img/mina.png"));
+            
+           
+        jugar:
+       for (int i = 0; i < files; i++) {
+           for (int j = 0; j < columnes; j++) {
+               Button casella = new Button();
+               double tamanyCasella=0;
+               
+               switch (nivell) {
+	            case "Fàcil":
+	            	 tamanyCasella=30;
+	                break;
+	            case "Mitjà":
+	            	 tamanyCasella=25;
+	                break;
+	            case "Difícil":
+	            	  tamanyCasella=20;
+	                break;
+	                
+	                
+	            }
+          
+               casella.setMinSize(tamanyCasella, tamanyCasella);
+               casella.setPrefSize(tamanyCasella, tamanyCasella);
+               casella.setMaxSize(tamanyCasella, tamanyCasella);
+
+             
+               casella.setPadding(Insets.EMPTY);
+
+               ImageView flagViewBandera = new ImageView(bandera);
+               flagViewBandera.setFitWidth(tamanyCasella); 
+               flagViewBandera.setFitHeight(tamanyCasella);
+               flagViewBandera.setPreserveRatio(true);
+               
+               ImageView flagViewMina = new ImageView(mina);
+               flagViewMina.setFitWidth(tamanyCasella); 
+               flagViewMina.setFitHeight(tamanyCasella);
+               flagViewMina.setPreserveRatio(true);
+               
+               
+               if((i%2==0 && j%2==0)||(i%2==1 && j%2==1) ) {
+               	 casella.getStyleClass().add("clar");
+               }else {
+               	 casella.getStyleClass().add("oscur");
+               }
+               
+               final int fila = i;
+               final int columna = j;
+               
+               casella.setOnMouseClicked(evt -> {
+            	 if (evt.getButton() == MouseButton.PRIMARY) {
+	                 if(!matriuTauler[fila][columna]) {
+	                	 casella.getStyleClass().add("buida");
+		                	 switch (nivell) {
+			     	            case "Fàcil":
+			     	            casella.setStyle("-fx-font-size: 24px;");
+			     	                break;
+			     	            case "Mitjà":
+			     	            	 casella.setStyle("-fx-font-size: 18px;");
+			     	                break;
+			     	            case "Difícil":
+			     	            	 casella.setStyle("-fx-font-size: 14px;");
+			     	                break;
+		                	 	}
+		                if(numMinesVoltant(fila, columna)!=0) {
+		                	casella.setText(numMinesVoltant(fila, columna)+"");  
+		                }
+	                	obrirCasellesBuides(fila, columna); 
+	            	    casellesBuides--;
+	            	    if (casellesBuides == 0) {
+	            	        partidaGuanyada();
+	            	    }
+	                 }else {
+	                	 casella.getStyleClass().add("mina");
+	                	 casella.setGraphic(flagViewMina);
+	                     casella.setDisable(true);
+	                     acabarPartida();
+	                 }
+            	 }else {
+            		 if (casella.getGraphic() == null) {
+                         casella.setGraphic(flagViewBandera);
+                         numBanderes--;
+                         banderes.setText(numBanderes+"");
+                     } else {
+                         casella.setGraphic(null);
+                         numBanderes++;
+                         banderes.setText(numBanderes+"");
+                     }
+            	 }
+               });
+
+               tauler.add(casella, j, i);
+           }
+       }
+   }
+
+    	public int numMinesVoltant (int fila,int columna) {
+    		int minesTocant=0;
+    		if(fila==0 && columna==0) {
+    			if(matriuTauler[0][1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[1][0]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[1][1]==true) {
+    				minesTocant++;
+    			}
+    		}else if(fila==0 && columna==matriuTauler.length-1) {
+    			if(matriuTauler[0][matriuTauler.length-2]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[1][matriuTauler.length-1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[1][matriuTauler.length-2]==true) {
+    				minesTocant++;
+    			}
+    		}else if(fila==0) {
+    			if(matriuTauler[0][columna-1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[0][columna+1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[1][columna-1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[1][columna]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[1][columna+1]==true) {
+    				minesTocant++;
+    			}
+    		}else if(fila==matriuTauler.length-1 && columna==0) {
+    			if(matriuTauler[matriuTauler.length-1][1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[matriuTauler.length-2][0]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[matriuTauler.length-2][1]==true) {
+    				minesTocant++;
+    			}
+    		}else if(fila==matriuTauler.length-1 && columna==matriuTauler.length-1) {
+    			if(matriuTauler[matriuTauler.length-1][matriuTauler.length-2]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[matriuTauler.length-2][matriuTauler.length-1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[matriuTauler.length-2][matriuTauler.length-2]==true) {
+    				minesTocant++;
+    			}
+    		}else if(fila==matriuTauler.length-1) {
+    			if(matriuTauler[matriuTauler.length-1][columna-1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[matriuTauler.length-1][columna+1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[matriuTauler.length-2][columna-1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[matriuTauler.length-2][columna]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[matriuTauler.length-2][columna+1]==true) {
+    				minesTocant++;
+    			}
+    		}else if (columna==0) {
+    			if(matriuTauler[fila-1][columna]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[fila-1][columna+1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[fila][columna+1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[fila+1][columna]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[fila+1][columna+1]==true) {
+    				minesTocant++;
+    			}
+    		}else if (columna==matriuTauler.length-1) {
+    			if(matriuTauler[fila-1][columna]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[fila-1][columna-1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[fila][columna-1]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[fila+1][columna]==true) {
+    				minesTocant++;
+    			}if(matriuTauler[fila+1][columna-1]==true) {
+    				minesTocant++;
+    			}
+    		}else {
+    			if(matriuTauler[fila-1][columna-1]) {
+    				minesTocant++;
+    			}if(matriuTauler[fila-1][columna]) {
+    				minesTocant++;
+    			}if(matriuTauler[fila-1][columna+1]) {
+    				minesTocant++;
+    			}if(matriuTauler[fila][columna-1]) {
+    				minesTocant++;
+    			}if(matriuTauler[fila][columna+1]) {
+    				minesTocant++;
+    			}if(matriuTauler[fila+1][columna-1]) {
+    				minesTocant++;
+    			}if(matriuTauler[fila+1][columna]) {
+    				minesTocant++;
+    			}if(matriuTauler[fila+1][columna+1]) {
+    				minesTocant++;
+    			}
+    		}
+    		return minesTocant;
+    	}
+
+    	public void acabarPartida() {
+    	    jocAcabat = true;
+
+    	    for (Node node : tauler.getChildren()) {
+    	        if (node instanceof Button) {
+    	            ((Button) node).setDisable(true);
+    	        }
+    	    }
+
+    	  
+    	    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    	    alert.setTitle("Fi del joc");
+    	    alert.setHeaderText(null);
+    	    alert.setContentText("Has pulsat una mina.");
+    	    alert.showAndWait();
+    	    timeline.stop();
+    	}
+    	
+    	public void partidaGuanyada() {
+    		jocAcabat = true;
+
+    	    for (Node node : tauler.getChildren()) {
+    	        if (node instanceof Button) {
+    	            ((Button) node).setDisable(true);
+    	        }
+    	    }
+
+    	  
+    	    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    	    alert.setTitle("Fi del joc");
+    	    alert.setHeaderText(null);
+    	    alert.setContentText("Has guanyat la partida.");
+    	    alert.showAndWait();
+    	    timeline.stop();
+    	}
+    	 
+    	private void obrirCasellesBuides(int fila, int columna) {
+    	    
+    	    if (fila < 0 || columna < 0 
+    	     || fila >= matriuTauler.length 
+    	     || columna >= matriuTauler[0].length) {
+    	        return;
+    	    }
+
+    	   
+    	    Button casella = getCasella(fila, columna);
+    	    if (casella == null || casella.isDisabled() || matriuTauler[fila][columna]) {
+    	        return;
+    	    }
+
+    	   
+    	    int minesAdjacents = numMinesVoltant(fila, columna);
+    	    casella.getStyleClass().add("buida");
+    	    if (minesAdjacents > 0) {
+    	        casella.setText(String.valueOf(minesAdjacents));
+    	    }
+    	    casella.setDisable(true);
+    	    casellesBuides--;
+
+    	   
+    	    if (minesAdjacents == 0) {
+    	        for (int x = -1; x <= 1; x++) {
+    	            for (int y = -1; y <= 1; y++) {
+    	                if (x != 0 || y != 0) {
+    	                    obrirCasellesBuides(fila + x, columna + y);
+    	                }
+    	            }
+    	        }
+    	    }
+    	}
+
+    	private Button getCasella(int fila, int columna) {
+    	    for (Node node : tauler.getChildren()) {
+    	        if (!(node instanceof Button)) continue;
+
+    	        Integer rowIndex = GridPane.getRowIndex(node);
+    	        Integer colIndex = GridPane.getColumnIndex(node);
+
+    	        int row = (rowIndex == null) ? 0 : rowIndex;
+    	        int col = (colIndex == null) ? 0 : colIndex;
+
+    	        if (row == fila && col == columna) {
+    	            return (Button) node;
+    	        }
+    	    }
+    	    return null; 
+    	}
+
+
+}

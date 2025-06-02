@@ -1,23 +1,25 @@
-
-.boto {
-
-	-fx-border-width:2.0px;
-
-	-fx-border-color:black;
-    -fx-background-color:#0041ff;
-    -fx-text-fill:white;
+@font-face {
+    src: url("tipografia/CutePixel.ttf");
 }
 
-.boto:hover {
-	-fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
+#textBenvingut {
+	-fx-font-family: "CutePixel";
+    -fx-font-size: 54.0px;
+    -fx-text-fill: #2196F3;
 }
 
+.button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.image-button:pressed {
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
+}
 
 #colorpicker {
-
     -fx-background-color: #0041ff;
-
     -fx-background-radius: 6.0px;
     -fx-border-color: black;
     -fx-border-width: 2.0px;
@@ -25,22 +27,19 @@
 
 }
 
-#colorpicker .label {
+#colorpicker.label {
     -fx-text-fill: white; 
 }
 
 .buida{
 	-fx-border-color: black;
-
     -fx-border-width: 1.0px;
-
 	-fx-background-color:#e0e0e0;
 }
 
 #tauler {
 
     -fx-background-color: #ffffff;
-
     -fx-padding: 20.0;
     -fx-border-color: #cccccc;
     -fx-border-width: 2.0px;

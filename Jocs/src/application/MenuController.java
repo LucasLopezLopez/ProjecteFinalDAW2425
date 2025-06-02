@@ -16,19 +16,22 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class MenuController implements Initializable {
@@ -74,26 +77,31 @@ public class MenuController implements Initializable {
 	private Button botoJocVida;
 	@FXML
 	private Button botoWordles;
-	@FXML
-	private Button botoVolver;
-	@FXML
-	private Button botoBorrarUsuari;
 
 	// Variables menu ajustes
-	private ContextMenu menuFoto;
+	private ContextMenu menuDesplegable;
 	private MenuItem itemCambiarFoto;
 	private MenuItem itemBorrarUsuari;
 	private MenuItem itemTanca;
 	private SeparatorMenuItem separador;
 
+	// Variable finestres obertes
+	private Stage windowBuscamines = null;
+	private Stage windoePixelArt = null;
+	private Stage windowJocVida = null;
+	private Stage windowWordle = null;
+
 	// Menu ajustes desplegable
 	@FXML
 	public void menuDesplegable(MouseEvent event) {
 		Platform.runLater(() -> {
-
 			try {
+	            if (menuDesplegable != null && menuDesplegable.isShowing()) {
+	                return;
+	            }
+
 				// menu de austes
-				menuFoto = new ContextMenu();
+				menuDesplegable = new ContextMenu();
 				// opcions del menu
 				itemCambiarFoto = new MenuItem("Cambiar foto de perfil");
 				itemBorrarUsuari = new MenuItem("Eliminar cuenta");
@@ -105,7 +113,7 @@ public class MenuController implements Initializable {
 				itemTanca.setStyle("-fx-font-family: 'CutePixel'; -fx-font-size: 14px;");
 
 				// Añadir les opcions al menu
-				menuFoto.getItems().addAll(itemCambiarFoto, separador, itemBorrarUsuari, itemTanca);
+				menuDesplegable.getItems().addAll(itemCambiarFoto, separador, itemBorrarUsuari, itemTanca);
 
 				// Funcio cambiar foto de perfil desde el menu
 				itemCambiarFoto.setOnAction(new EventHandler<ActionEvent>() {
@@ -145,10 +153,14 @@ public class MenuController implements Initializable {
 					}
 				});
 
-				// Mostrar Menu Ajustes
-				Node source = (Node) event.getSource();
-				menuFoto.show(source, event.getScreenX(), event.getScreenY());
+				// Mostrar Menu Ajustes , abajo izquierda
+				Node node = (Node) event.getSource();
+				menuDesplegable.show(node, Side.BOTTOM, -105, 0);
 
+	            menuDesplegable.setOnHidden(e -> {
+	                menuDesplegable = null;
+	            });
+	            
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -156,7 +168,6 @@ public class MenuController implements Initializable {
 
 	}
 
-	
 	// Boton borrar usuairo
 	@FXML
 	public void borrarUsuari(ActionEvent event) throws ClassNotFoundException, IOException {
@@ -240,98 +251,175 @@ public class MenuController implements Initializable {
 	// Boto per a entrar als jocs
 	@FXML
 	public void obrirBuscaMines(MouseEvent event) {
+		// si la ventana existe y se esta mostrando , muestra error
+		if (windowBuscamines != null && windowBuscamines.isShowing()) {
+			alertaError("BuscaMines", "El juego ya esta abierto.");
+			return;
+		}
 		try {
-			VBox rootBuscaMines = (VBox) FXMLLoader.load(getClass().getResource("TamanyBuscamines.fxml"));
+			// Crear el FXMLLoader para acceder al controlador
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("TamanyBuscamines.fxml"));
+			VBox rootBuscaMines = loader.load();
+
 			Scene pantallaBuscaMines = new Scene(rootBuscaMines);
-			Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			pantallaBuscaMines.getStylesheets().add(getClass().getResource("tamanyBuscamines.css").toExternalForm());
-			window.setScene(pantallaBuscaMines);
-			window.setTitle("Busca Mines");
-			window.show();
+
+			// Obtener el controlador
+			TamanyBuscaminesController controlador = loader.getController();
+			controlador.setUsername(usuariActual.getEmail());
+
+			// Crear y configurar la nueva ventana
+			windowBuscamines = new Stage();
+			windowBuscamines.setScene(pantallaBuscaMines);
+			windowBuscamines.setTitle("Buscamines");
+
+			// obtener la nueva ventana , aplicar el menu como ventana principal i modalidad ninguna para poder intractuar con el menu
+			Stage windowMenu = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			windowBuscamines.initOwner(windowMenu);
+			windowBuscamines.initModality(Modality.NONE);
+
+			// si pulsa 'X' cierra la ventana y guarda la partida
+			windowBuscamines.setOnCloseRequest(x -> {
+				if (controlador != null) {
+					//controlador.guardarPartida();
+				}
+				windowBuscamines = null; 
+			});
+			
+			// mostrar ventana
+			windowBuscamines.show();
+
 		} catch (Exception e) {
 			e.printStackTrace();
+			alertaError("Error al abrir BuscaMines","Ha ocurrido un error al intentar abrir el juego. Intenta de nuevo.");
 		}
 	}
 
 	@FXML
 	public void obrirPixelArt(MouseEvent event) {
+		if (windoePixelArt != null && windoePixelArt.isShowing()) {
+			alertaError("Pixel Art", "El juego ya esta abierto.");
+			return;
+		}
+		try {
+			// cargar el FXML i obeter el controlado
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("TamanyPixelart.fxml"));
+			VBox rootPixelArt = (VBox) loader.load();
+			
+			// carear Scene i css
+			Scene pantallaPixelArt = new Scene(rootPixelArt);
+			pantallaPixelArt.getStylesheets().add(getClass().getResource("tamanyPixelart.css").toExternalForm());
 
-		//finestraOberta dades = finestraOberta.getInstancia();
-		//if (!dades.isOberta()) {
-			try {
-				VBox rootPixelArt = (VBox) FXMLLoader.load(getClass().getResource("TamanyPixelart.fxml"));
-				Scene pantallaPixelArt = new Scene(rootPixelArt);
-				Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				pantallaPixelArt.getStylesheets().add(getClass().getResource("tamanyPixelart.css").toExternalForm());
-				window.setScene(pantallaPixelArt);
-				window.setTitle("Pixel Art");
-				window.show();
+			// obtener controlador del fxml anterior i enviar el email del usuairo
+			TamanyPixelartController controlador = loader.getController();
+			controlador.setUsername(usuariActual.getEmail());
+			
+			// crar una ventana para el jugo aparte del menu
+			windoePixelArt = new Stage();
+			windoePixelArt.setScene(pantallaPixelArt);
+			windoePixelArt.setTitle("Pixel Art");
 
-				//dades.setOberta(true);
+			// obtener la ventana
+			Stage windowMenu = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			windoePixelArt.initOwner(windowMenu);
+			windoePixelArt.initModality(Modality.NONE);
 
-				/*window.setOnCloseRequest(x -> {
-					dades.setOberta(false);
-				});*/
+			windoePixelArt.setOnCloseRequest(e -> {
+				if (controlador != null) {
+					//controlador.guardarPartida();
+				}
+				windoePixelArt = null; 
+			});
+			
+			windoePixelArt.show();
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		//}
+		} catch (Exception e) {
+			e.printStackTrace();
+			alertaError("Error al abrir Pixel Art",
+					"Ha ocurrido un error al intentar abrir el juego. Intenta de nuevo.");
+		}
 
 	}
 
 	@FXML
 	public void obrirJocVida(MouseEvent event) {
-		//finestraOberta dades = finestraOberta.getInstancia();
-		//if (!dades.isOberta()) {
-			try {
-				VBox rootJocVida = (VBox) FXMLLoader.load(getClass().getResource("JocVida.fxml"));
-				Scene pantallaJocVida = new Scene(rootJocVida);
-				Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				pantallaJocVida.getStylesheets().add(getClass().getResource("jocVida.css").toExternalForm());
-				window.setScene(pantallaJocVida);
-				window.setTitle("Joc de la vida");
-				window.show();
+		if (windowJocVida != null && windowJocVida.isShowing()) {
+			alertaError("Joc De La Vida", "El juego ya esta abierto.");
+			return;
+		}
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("ElegirTamanyJocDeLaVida.fxml"));
+			VBox rootJocVida = (VBox) loader.load();
+			
+			Scene pantallaJocVida = new Scene(rootJocVida);
+			pantallaJocVida.getStylesheets().add(getClass().getResource("ElegirTamanyJocDeLaVida.css").toExternalForm());
 
-				//dades.setOberta(true);
+			ElegirTamanyJocDeLaVidaController controlador = loader.getController();
+			controlador.setUsername(usuariActual.getEmail());
+			
+			windowJocVida = new Stage();
+			windowJocVida.setScene(pantallaJocVida);
+			windowJocVida.setTitle("Joc De La Vida");
 
-				/*window.setOnCloseRequest(x -> {
-					dades.setOberta(false);
-				});*/
+			Stage windowMenu = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			windowJocVida.initOwner(windowMenu);
+			windowJocVida.initModality(Modality.NONE);
 
+			windowJocVida.setOnCloseRequest(e -> {
+				if (controlador != null) {
+					//controlador.guardarPartida();
+				}
+				windowJocVida = null; 
+			});
+			
+			windowJocVida.show();
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		//}
+		} catch (Exception e) {
+			e.printStackTrace();
+			alertaError("Error al abrir BuscaMines",
+					"Ha ocurrido un error al intentar abrir el juego. Intenta de nuevo.");
+		}
 	}
 
 	@FXML
 	public void obrirWordles(MouseEvent event) {
-		//finestraOberta dades = finestraOberta.getInstancia();
-		//if (!dades.isOberta()) {
-			try {
-				VBox rootWordles = (VBox) FXMLLoader.load(getClass().getResource("Wordle.fxml"));
-				Scene pantallaWordles = new Scene(rootWordles);
-				Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				pantallaWordles.getStylesheets().add(getClass().getResource("Wordle.css").toExternalForm());
-				window.setScene(pantallaWordles);
-				window.setTitle("Wordle");
-				window.show();
+		if (windowWordle != null && windowWordle.isShowing()) {
+			alertaError("Wordle", "El juego ya esta abierto.");
+			return;
+		}
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("Wordle.fxml"));
+			VBox rootWordles = (VBox) (VBox) loader.load();
+			
+			Scene pantallaWordles = new Scene(rootWordles);
+			pantallaWordles.getStylesheets().add(getClass().getResource("Wordle.css").toExternalForm());
 
-				//dades.setOberta(true);
+			WordleController controlador = loader.getController();
+			controlador.setUsername(usuariActual.getEmail());
+			
+			windowWordle = new Stage();
+			windowWordle.setScene(pantallaWordles);
+			windowWordle.setTitle("Wordle");
 
-				/*window.setOnCloseRequest(x -> {
-					dades.setOberta(false);
-				});*/
+			Stage windowMenu = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			windowWordle.initOwner(windowMenu);
+			windowWordle.initModality(Modality.NONE);
 
+			windowWordle.setOnCloseRequest(e -> {
+				if (controlador != null) {
+					//controlador.guardarPartida();
+				}
+				windowWordle = null; 
+			});
+			
+			windowWordle.show();
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		//}
+		} catch (Exception e) {
+			e.printStackTrace();
+			alertaError("Error al abrir Wordle",
+					"Ha ocurrido un error al intentar abrir el juego. Intenta de nuevo.");
+		}
 	}
-
 	// Boton cerrar sesion
 
 	public void logout(ActionEvent event) {
@@ -348,37 +436,28 @@ public class MenuController implements Initializable {
 		}
 	}
 
+	// Funcio de les alertes
+	public void alertaError(String camp, String error) {
+		Alert alerta = new Alert(AlertType.WARNING);
+		alerta.setTitle("Error abriendo un juego. ");
+		alerta.setHeaderText("Error en el '" + camp + "'. ");
+		alerta.setContentText(error);
+		alerta.showAndWait();
+	}
 
 	// Recuperar els datos del objecte usaris
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		Font.loadFont(getClass().getResource("/application/tipografia/CutePixel.ttf").toExternalForm(), 24);
-
-		try {
-			imgAjustes.setImage(new Image(getClass().getResource("/application/img/boto_ajustes.png").toExternalForm()));
-
-			imgBuscaMines.setImage(new Image(getClass().getResource("/application/img/img_buscamines.png").toExternalForm()));
-
-			imgPixelArt.setImage(new Image(getClass().getResource("/application/img/img_pixelart.png").toExternalForm()));
-
-			imgJocVida.setImage(new Image(getClass().getResource("/application/img/img_jocvida.png").toExternalForm()));
-
-			imgWordles.setImage(new Image(getClass().getResource("/application/img/img_wordle.png").toExternalForm()));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
 		Platform.runLater(() -> {
 			Stage window = (Stage) root.getScene().getWindow();
 			if (window != null) {
 				this.usuariActual = (Usuaris) window.getUserData();
 				if (usuariActual != null) {
-					this.emailUsuari = usuariActual.getEmail(); // recuperar el email per a poder eliminar el usuari
-																// segun el email
+					this.emailUsuari = usuariActual.getEmail(); // recuperar el email per a poder eliminar el usuari segun el email
 					textoBienvenido.setText("Bienvenido " + usuariActual.getNom());// Texto de bienvenida
 				} else {
-					System.out.println("El objecte usuari es null. ");
+					//System.out.println("El objecte usuari es null. ");
 				}
 			} else {
 				System.out.println("La stage es null, no se mostra. ");

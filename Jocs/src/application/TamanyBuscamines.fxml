@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
@@ -10,32 +11,25 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.TamanyBuscaminesController">
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="800.0" stylesheets="@tamanyBuscamines.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.TamanyBuscaminesController">
    <children>
-      <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="200.0" prefWidth="800.0" spacing="10.0">
          <children>
-            <Text fx:id="textBenvingut" strokeType="OUTSIDE" strokeWidth="0.0" text="BENVINGUT A BUSCAMINES" textAlignment="CENTER">
-               <font>
-                  <Font name="Consolas" size="36.0" />
-               </font>
-               <HBox.margin>
-                  <Insets left="20.0" right="20.0" top="50.0" />
-               </HBox.margin>
-            </Text>
+            <Label fx:id="textBenvingut" text="BUSCAMINES" />
             <ImageView fx:id="imgBandera" fitHeight="54.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@img/bandera_roja.png" />
                </image>
                <HBox.margin>
-                  <Insets top="38.0" />
+                  <Insets />
                </HBox.margin>
             </ImageView>
          </children>
          <VBox.margin>
-            <Insets top="30.0" />
+            <Insets />
          </VBox.margin>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="300.0" prefWidth="800.0" spacing="10.0">
          <children>
             <Text fx:id="textNivell" strokeType="OUTSIDE" strokeWidth="0.0" text="Selecciona el nivell de dificultat:">
                <font><Font name="Consolas" size="17.0" /></font>
@@ -43,26 +37,32 @@
                   <Insets left="100.0" />
                </HBox.margin>
             </Text>
-            <ComboBox id="comboNivel" fx:id="comboNivel" maxWidth="150.0" prefHeight="31.0" prefWidth="150.0" promptText="Fàcil" styleClass="comboNivel" HBox.hgrow="ALWAYS">
-               <HBox.margin><Insets left="20.0" top="-5.0" /></HBox.margin>
+            <ComboBox id="comboNivel" fx:id="comboNivel" maxWidth="150.0" prefHeight="30.0" prefWidth="150.0" promptText="Fàcil" styleClass="comboNivel" HBox.hgrow="ALWAYS">
+               <HBox.margin><Insets /></HBox.margin>
             </ComboBox>
          </children>
-         <padding>
-            <Insets left="50.0" right="50.0" top="15.0" />
-         </padding>
-         <VBox.margin><Insets top="80.0" /></VBox.margin>
+         <VBox.margin><Insets /></VBox.margin>
       </HBox>
-     
-      <Button fx:id="botoIniciar" alignment="CENTER" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" onAction="#onAceptarClick" style="-fx-background-color: #4994ec;" text="Iniciar" textFill="WHITE">
-         <VBox.margin>
-            <Insets left="350.0" />
-         </VBox.margin>
-         <font>
-            <Font name="System Bold" size="15.0" />
-         </font>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </Button>
+      <HBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="800.0" spacing="10.0">
+         <children>
+           
+            <Button fx:id="botoMenu" alignment="CENTER" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" onAction="#obrirMenu" style="-fx-background-color: #4994ec;" text="Menu" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Button>
+            <Button fx:id="botoIniciar" alignment="CENTER" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" onAction="#onAceptarClick" style="-fx-background-color: #4994ec;" text="Iniciar" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Button>
+         </children>
+      </HBox>
    </children>
 </VBox>

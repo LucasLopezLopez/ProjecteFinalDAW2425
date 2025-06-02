@@ -26,7 +26,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class LoginController implements Initializable {
@@ -179,7 +178,7 @@ public class LoginController implements Initializable {
 			// crear hash
 			KeySpec spec = new PBEKeySpec(contrasenya.toCharArray(), salt, iterations, keyLength);
 
-			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 			byte[] hashCalculado = factory.generateSecret(spec).getEncoded();
 			String hashCalculadoBase64 = Base64.getEncoder().encodeToString(hashCalculado);
 
@@ -279,7 +278,6 @@ public class LoginController implements Initializable {
 	// Mostrar login con texto Bienvenida
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		Font.loadFont(getClass().getResource("/application/tipografia/CutePixel.ttf").toExternalForm(), 24);
 		Platform.runLater(() -> {
 			Stage stage = (Stage) textoBienvenidoLogin.getScene().getWindow();
 			Object userData = stage.getUserData();

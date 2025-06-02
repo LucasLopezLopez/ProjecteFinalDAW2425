@@ -28,7 +28,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class RegistreController implements Initializable {
@@ -199,7 +198,7 @@ public class RegistreController implements Initializable {
 
 	public String contrasenyaRegistre(String contrasenya, String confirmarContrasenya) {
 		if (!contrasenya.isBlank()) {
-			if (contrasenya.matches("^(?=.\\d)(?=.[A-Z])(?=.*[a-z])\\S{8,16}$")) {
+			if (contrasenya.matches("^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])\\S{8,16}$")) {
 				if (contrasenya.equals(confirmarContrasenya)) {
 					return contrasenya;
 				} else {
@@ -230,13 +229,13 @@ public class RegistreController implements Initializable {
 
 		// aquests valors es poden establir per defecte, igual per a tots els hash
 		int fortalesa = 65536; // iteracions que realitzarà l'algorisme
-		int longitudHash = 64 * 8; // quantitat de bytes * 8
+		int longitudHash = 512; // quantitat de bytes * 8
 
 		// Procés de Hash
 		try {
 			KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, fortalesa, longitudHash);
 			// Obtenim algoritme PBKDF2WithHmacSHA
-			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 			// generem el hash, un array de bytes
 			byte[] hash = factory.generateSecret(spec).getEncoded();
 			System.out.println("Contrasenya inicial: " + password);
@@ -334,7 +333,6 @@ public class RegistreController implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		Font.loadFont(getClass().getResource("/application/tipografia/CutePixel.ttf").toExternalForm(), 24);
 	}
 
 }
