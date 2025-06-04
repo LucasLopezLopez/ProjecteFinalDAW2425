@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import javafx.scene.control.Label;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,41 +27,51 @@ import javafx.stage.Stage;
 
 public class ElegirTamanyJocDeLaVidaController implements Initializable {
 
+	int zombies = 0;
+	int iniciales = 0;
 	int numCeldas = 0;
 	String grande = "";
-
+	String fallo = "";
+	
+	
 	@FXML
-	private CheckBox peq;
+	private CheckBox peq;	
 	@FXML
-	private CheckBox med;
+	private CheckBox med;	
 	@FXML
-	private CheckBox gran;
+	private CheckBox gran;	
 	@FXML
-	private CheckBox pers;
+	private CheckBox pers;	
 	@FXML
-	private HBox desactivar;
+	private HBox desactivar;	
+	@FXML
+	private Text engrisecer;
+	@FXML
+	private Text engrisecer2;
+	@FXML
+	private Text engrisecer3;
 	@FXML
 	private Text textoDesa;
 	@FXML
 	private Button jugar;
-	@FXML
+	@FXML 
 	private TextField numCasillas;
 	@FXML
-	private Label textBenvingut;
+	private TextField numZombies;
 	@FXML
-	private Text textTamany;
+	private TextField numInicials;
 	
-	// Objacte usuari
-	private String usuariActual;
+	// Objecte a compartir amb l'altra escena
+	private Usuaris usuariActual;
 
-	public void setUsername(String username) {
-		this.usuariActual = username;
-
+	public void setUsuari(Usuaris usuariActual) {
+		this.usuariActual = usuariActual;
 	}
 
-	public String getUsuari() {
+	public Usuaris getUsuari() {
 		return this.usuariActual;
 	}
+	
 	
 	// Boto que envia a la escena menu
 	@FXML
@@ -78,7 +88,7 @@ public class ElegirTamanyJocDeLaVidaController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@FXML
 	public void clicarPeq(MouseEvent e) {
 		med.setSelected(false);
@@ -86,8 +96,12 @@ public class ElegirTamanyJocDeLaVidaController implements Initializable {
 		pers.setSelected(false);
 		desactivar.setDisable(true);
 		textoDesa.setVisible(false);
+		numCasillas.setVisible(false);
+		//engrisecer.setStyle("-fx-fill: grey;");
+		//engrisecer2.setStyle("-fx-fill: grey;");
+		//engrisecer3.setStyle("-fx-fill: grey;");
 	}
-
+	
 	@FXML
 	public void clicarMed(MouseEvent e) {
 		peq.setSelected(false);
@@ -95,8 +109,12 @@ public class ElegirTamanyJocDeLaVidaController implements Initializable {
 		pers.setSelected(false);
 		desactivar.setDisable(true);
 		textoDesa.setVisible(false);
+		numCasillas.setVisible(false);
+		//engrisecer.setStyle("-fx-fill: grey;");
+		//engrisecer2.setStyle("-fx-fill: grey;");
+		//engrisecer3.setStyle("-fx-fill: grey;");
 	}
-
+	
 	@FXML
 	public void clicarGran(MouseEvent e) {
 		peq.setSelected(false);
@@ -104,8 +122,12 @@ public class ElegirTamanyJocDeLaVidaController implements Initializable {
 		pers.setSelected(false);
 		desactivar.setDisable(true);
 		textoDesa.setVisible(false);
+		numCasillas.setVisible(false);
+		//engrisecer.setStyle("-fx-fill: grey;");
+		//engrisecer2.setStyle("-fx-fill: grey;");
+		//engrisecer3.setStyle("-fx-fill: grey;");
 	}
-
+	
 	@FXML
 	public void activar(MouseEvent e) {
 		peq.setSelected(false);
@@ -114,63 +136,108 @@ public class ElegirTamanyJocDeLaVidaController implements Initializable {
 		if (pers.isSelected()) {
 			desactivar.setDisable(false);
 			textoDesa.setVisible(true);
+			engrisecer.setVisible(true);
+			engrisecer2.setVisible(true);
+			//engrisecer3.setVisible(true);
 			numCasillas.setVisible(true);
+			numInicials.setVisible(true);
+			//engrisecer.setStyle("-fx-fill: black;");
+			//engrisecer2.setStyle("-fx-fill: black;");
+			//engrisecer3.setStyle("-fx-fill: black;");
+			
 		} else {
 			desactivar.setDisable(true);
 			textoDesa.setVisible(false);
+			engrisecer.setVisible(false);
+			engrisecer2.setVisible(false);
+			//engrisecer3.setVisible(false);
 			numCasillas.setVisible(false);
+			numInicials.setVisible(false);
+			//engrisecer.setStyle("-fx-fill: grey;");
+			//engrisecer2.setStyle("-fx-fill: grey;");
+			//engrisecer3.setStyle("-fx-fill: grey;");
 		}
 	}
-
+	
 	@FXML
 	public void juego() {
-		int fallo = 0;
-
+		
 		try {
 			numCeldas = Integer.parseInt(numCasillas.getText());
 			if (((int) Math.sqrt(numCeldas)) == Math.sqrt(numCeldas)) {
-				fallo = 0;
+				fallo = "";
+			} else if (numCeldas < 9 || numCeldas > 1369) {
+				fallo = "limites";
 			} else {
-				fallo = 2;
+				fallo = "noDisponible";
 			}
+			
+			iniciales = Integer.parseInt(numInicials.getText());
+			
+			if (iniciales > numCeldas) {
+				fallo = "sobrepoblacion";
+			} else if (zombies > numCeldas) {
+				fallo = "sobrepoblacionZombie";
+			} else if ((zombies + iniciales) > numCeldas) {
+				fallo = "sobrepoblacionTotal";
+			}
+			
 		} catch (Exception e) {
-			fallo = 1;
+			fallo = "noNumero";
 		}
-
+		
+		
+		int columnas = 0;
 		if (peq.isSelected()) {
 			try {
+				columnas = 17;
 				grande = "peq";
+				iniciales = ((columnas * columnas) * 20) / 100;
 				abrirNuevaVentana();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else if (med.isSelected()) {
 			try {
+				columnas = 25;
 				grande = "med";
+				iniciales = ((columnas * columnas) * 20) / 100;
 				abrirNuevaVentana();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else if (gran.isSelected()) {
 			try {
+				columnas = 33;
+				iniciales = ((columnas * columnas) * 20) / 100;
 				grande = "grande";
 				abrirNuevaVentana();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-
+		
 		if (!peq.isSelected() && !med.isSelected() && !gran.isSelected() && !pers.isSelected()) {
-			System.out.println("gay");
+			
 		} else if (pers.isSelected()) {
 			if (numCasillas.getText().equals("")) {
-				System.out.println("doble gay");
-			} else if (fallo == 1) {
+				
+			} else if (numInicials.getText().equals("")) {
+				
+			} else if (fallo.equals("sobrepoblacionZombie")) {
+				alerta("No pueden haber más células zombies de las creadas");
+			} else if (fallo.equals("sobrepoblacion")) {
+				alerta("No pueden haber más células iniciales de las creadas");
+			} else if (fallo.equals("sobrepoblacionTotal")) {
+				alerta("No pueden haber más células iniciales y zombies de las creadas");
+			} else if (fallo.equals("noNumero")) {
 				alerta("Debes usar números enteros");
-			} else if (fallo == 2) {
+			} else if (fallo.equals("noDisponible")) {
 				alerta("Lo siento, la cifra de células marcadas no está disponible");
+			} else if (fallo.equals("limites")) {
+				alerta("Debe elegir un número del 9 al 1.369");
 			} else {
-
+				
 				try {
 					grande = "pers";
 					abrirNuevaVentana();
@@ -180,7 +247,7 @@ public class ElegirTamanyJocDeLaVidaController implements Initializable {
 			}
 		}
 	}
-
+	
 	public void alerta(String mensaje) {
 		ButtonType botonOkay = new ButtonType("De acuerdo", ButtonData.OK_DONE);
 		Alert alertaGanar = new Alert(Alert.AlertType.CONFIRMATION);
@@ -188,48 +255,67 @@ public class ElegirTamanyJocDeLaVidaController implements Initializable {
 		alertaGanar.setHeaderText(mensaje);
 		alertaGanar.getButtonTypes().setAll(botonOkay);
 		Optional<ButtonType> resultado = alertaGanar.showAndWait();
-
-		if (resultado.isPresent() && resultado.get() == botonOkay) {
+		
+		if (fallo.equals("sobrepoblacionZombie")) {
+			zombies = 0;
+			numZombies.setText("");
+		} else if (fallo.equals("sobrepoblacionTotal")) {
+			zombies = 0;
+			iniciales = 0;
+			numInicials.setText("");
+			numZombies.setText("");
+		} else if (fallo.equals("sobrepoblacion")) {
+			iniciales = 0;
+			numInicials.setText("");
+		} else if (fallo.equals("limites")) {
+			numCasillas.setText("");
+		} else if (fallo.equals("noNumero")) {
+			
+		} else if (resultado.isPresent() && resultado.get() == botonOkay) {
 			sugerenciaNum();
 		} else {
 			sugerenciaNum();
 		}
 	}
-
+	
 	public void sugerenciaNum() {
 		boolean correcte = false;
 		int auxArriba = numCeldas;
 		int auxAbajo = numCeldas;
-
+		
 		while (!correcte) {
 			auxArriba++;
 			auxAbajo--;
 			if (auxArriba > 22500) {
-
+				
 			} else if (auxAbajo < 9) {
-
+				
 			} else if (Math.sqrt(auxArriba) == (int) Math.sqrt(auxArriba)) {
 				numCeldas = auxArriba;
 				correcte = true;
-
+				
 			} else if (Math.sqrt(auxAbajo) == (int) Math.sqrt(auxAbajo)) {
 				numCeldas = auxAbajo;
 				correcte = true;
-
+				
 			}
 		}
-
+		
 		numCasillas.setText("" + numCeldas);
 	}
-
+	
 	public void abrirNuevaVentana() throws IOException {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/JocDeLaVida.fxml"));
         Parent root = loader.load();
+        root.getStylesheets().add(getClass().getResource("tamanyBuscamines.css").toExternalForm());
 
         JocDeLaVidaController controller = loader.getController();
 
-        controller.celdas = numCeldas;  
+        controller.celdas = numCeldas;
+		controller.celdas = numCeldas;
+		//controller.zombies = zombies;
+		controller.celulas = iniciales;
         controller.inicializarTablero(grande); 
 
         Stage nuevaVentana = new Stage();
@@ -242,9 +328,11 @@ public class ElegirTamanyJocDeLaVidaController implements Initializable {
 
         nuevaVentana.show();
 
+        // Cerramos la ventana de selección
         ventanaActual.close();
+		
 	}
-
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		peq.setSelected(false);
@@ -253,7 +341,19 @@ public class ElegirTamanyJocDeLaVidaController implements Initializable {
 		pers.setSelected(false);
 		desactivar.setDisable(true);
 		textoDesa.setVisible(false);
+		engrisecer.setVisible(false);
+		engrisecer2.setVisible(false);
+		//engrisecer3.setVisible(false);
 		numCasillas.setVisible(false);
+		//numZombies.setVisible(false);
+		numInicials.setVisible(false);
+		//engrisecer.setStyle("-fx-fill: grey;");
+		//engrisecer2.setStyle("-fx-fill: grey;");
+		//engrisecer3.setStyle("-fx-fill: grey;");
 	}
 
+
+
+	
 }
+

@@ -181,7 +181,7 @@ public class MenuController implements Initializable {
 			String contrasenya = "";
 
 			Connection c = DriverManager.getConnection(urlBaseDades, usuari, contrasenya);
-			String sentencia = "DELETE FROM usuarios where email = ?";
+			String sentencia = "DELETE FROM usuarios where email = ? ";
 			PreparedStatement s = c.prepareStatement(sentencia);
 			s.setString(1, emailUsuari);
 
@@ -193,13 +193,10 @@ public class MenuController implements Initializable {
 			} else {
 				System.out.println("No existeix ningun email .");
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
-
 	// Cambiar img del avatar
 	// Pasar la img a fichero bite i el fichero guardarlo en la base de datos
 	@FXML
@@ -355,7 +352,7 @@ public class MenuController implements Initializable {
 			pantallaJocVida.getStylesheets().add(getClass().getResource("ElegirTamanyJocDeLaVida.css").toExternalForm());
 
 			ElegirTamanyJocDeLaVidaController controlador = loader.getController();
-			controlador.setUsername(usuariActual.getEmail());
+			//controlador.setUsername(usuariActual.getEmail());
 			
 			windowJocVida = new Stage();
 			windowJocVida.setScene(pantallaJocVida);
@@ -376,7 +373,7 @@ public class MenuController implements Initializable {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			alertaError("Error al abrir BuscaMines",
+			alertaError("Error al abrir Joc De La Vida",
 					"Ha ocurrido un error al intentar abrir el juego. Intenta de nuevo.");
 		}
 	}
@@ -424,13 +421,34 @@ public class MenuController implements Initializable {
 
 	public void logout(ActionEvent event) {
 		try {
+			if (windowBuscamines != null) {
+				windowBuscamines.close();
+				windowBuscamines = null;
+			}
+			if (windoePixelArt != null) {
+				windoePixelArt.close();
+				windoePixelArt = null;
+			}
+			if (windowJocVida != null) {
+				windowJocVida.close();
+				windowJocVida = null;
+			}
+			if (windowWordle != null) {
+				windowWordle.close();
+				windowWordle = null;
+			}
+
 			VBox rootLogout = (VBox) FXMLLoader.load(getClass().getResource("Login.fxml"));
 			Scene pantallaIrLogin = new Scene(rootLogout);
+			Stage windowLogin = new Stage();
+			windowLogin.setScene(pantallaIrLogin);
+			windowLogin.setTitle("Login");
+			windowLogin.show();
+
 			MenuItem menuItem = (MenuItem) event.getSource();
-			Stage window = (Stage) menuItem.getParentPopup().getOwnerWindow();
-			window.setScene(pantallaIrLogin);
-			window.setTitle("Login");
-			window.show();
+			Stage windowMenu = (Stage) menuItem.getParentPopup().getOwnerWindow();
+			windowMenu.close();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

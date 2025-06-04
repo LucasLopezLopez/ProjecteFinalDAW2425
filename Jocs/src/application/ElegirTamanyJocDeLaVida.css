@@ -55,6 +55,18 @@
     -fx-padding: 5.0px;
 }
 
+#engrisecer {
+	-fx-font-family: "CutePixel";
+    -fx-font-size: 18.0px;
+    -fx-text-fill: #2196F3;
+}
+
+#engrisecer2 {
+	-fx-font-family: "CutePixel";
+    -fx-font-size: 18.0px;
+    -fx-text-fill: #2196F3;
+}
+
 #textoDesa {
 	-fx-font-family: "CutePixel";
     -fx-font-size: 18.0px;

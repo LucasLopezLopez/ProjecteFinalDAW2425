@@ -72,6 +72,8 @@ public class TaulerBuscaminesController {
 	private StackPane rootPane;
 	@FXML
 	private Label textRecords;
+	@FXML
+	private Text casellesDescobrir; 
 
 	private Timeline timeline;
 	private boolean jocAcabat = false;
@@ -162,6 +164,8 @@ public class TaulerBuscaminesController {
 		colocarMines(numMines, matriuTauler);
 		// Crear Tauler
 		crearTauler(files, columnes);
+		
+		casellesDescobrir.setText(casellesBuides+"");
 
 	}
 
@@ -490,6 +494,8 @@ public class TaulerBuscaminesController {
 		}
 		casella.setDisable(true);
 		casellesBuides--;
+		
+		casellesDescobrir.setText(casellesBuides+"");
 
 		if (minesAdjacents == 0) {
 			for (int x = -1; x <= 1; x++) {

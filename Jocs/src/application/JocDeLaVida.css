@@ -5,16 +5,23 @@
 #textBenvingut {
 	-fx-font-family: "CutePixel";
     -fx-font-size: 64.0px;
-    -fx-text-fill: #2196F3;
 }
+
 
 .button {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
+	-fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-background-radius: 3.0;
+    -fx-font-family: "CutePixel";
+    -fx-font-size: 24.0px; 
 }
 
-.boto:hover {
+.button:hover {
 	-fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
+	-fx-scale-y: 1.1;
 }
 
+.label {
+	-fx-font-family: "CutePixel";
+    -fx-font-size: 24.0px;
+}

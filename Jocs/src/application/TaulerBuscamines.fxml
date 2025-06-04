@@ -59,6 +59,22 @@
                      </HBox.margin>
                   </Text>
                </children>
+               <ImageView fx:id="imgBandera1" fitHeight="48.0" fitWidth="52.0" preserveRatio="true">
+                     <image>
+                        <Image url="@img/tick.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Text fx:id="casellesDescobrir" text="00" textAlignment="CENTER">
+                     <font>
+                        <Font name="Consolas Bold" size="24.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Text>
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
